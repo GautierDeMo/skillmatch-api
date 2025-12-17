@@ -7,6 +7,7 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
+    // now the seed is triggered with command 'npx prisma db seed'
     seed: "tsx -r dotenv/config prisma/seed.ts"
   },
   datasource: {

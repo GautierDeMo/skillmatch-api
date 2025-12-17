@@ -16,7 +16,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app.ts",
-    "seed": "tsx -r dotenv/config prisma/seed.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
