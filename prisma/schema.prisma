@@ -14,33 +14,40 @@ datasource db {
 }
 
 model Freelance {
-  id       Int       @id @default(autoincrement())
-  name     String
-  email    String    @unique
-  skills   String[]
-  tjm      Int
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  salt      String
+  skills    String[]
+  tjm       Int
   // relations
-  projects Project[]
+  projects  Project[]
+  // timestamp(s)
+  createdAt DateTime  @default(now())
 }
 
 model Enterprise {
-  id       Int       @id @default(autoincrement())
-  name     String
-  sector   String
+  id        Int       @id @default(autoincrement())
+  name      String
+  salt      String
+  sector    String
   // relations
-  projects Project[]
+  projects  Project[]
+  // timestamp(s)
+  createdAt DateTime  @default(now())
 }
 
 model Project {
   id             Int        @id @default(autoincrement())
-  title          String
   description    String
-  requiredSkills String[]
   maxTjm         Int
+  requiredSkills String[]
+  title          String
   // relations
   enterpriseId   Int
   enterprise     Enterprise @relation(fields: [enterpriseId], references: [id])
-
-  freelanceId    Int?       
+  freelanceId    Int?
   freelance      Freelance? @relation(fields: [freelanceId], references: [id])
+  // timestamp(s)
+  createdAt      DateTime   @default(now())
 }
