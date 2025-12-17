@@ -7,7 +7,7 @@ const freelances = [
     name: "Alice Dev",
     email: "alice.dev@gmail.com",
     tjm: 500,
-    skills: ["React", "Node.js", "TypeScript"],
+    skills: ["React", "TypeScript", "Tailwind"],
   },
   {
     name: "Bob Design",
@@ -56,12 +56,6 @@ const freelances = [
     email: "ines.vue@web.fr",
     tjm: 480,
     skills: ["Vue.js", "Nuxt", "Tailwind"],
-  },
-  {
-    name: "Jack Fullstack",
-    email: "jack.stack@code.com",
-    tjm: 620,
-    skills: ["Angular", ".NET", "C#"],
   },
 ];
 
@@ -171,18 +165,6 @@ const enterprises = [
         description: "Optimisation des tournées de livraison par IA.",
         maxTjm: 700,
         requiredSkills: ["Python", "Machine Learning", "Algorithms"],
-      },
-    ],
-  },
-  {
-    name: "AeroSpace",
-    sector: "Aerospace",
-    projects: [
-      {
-        title: "Interface de Contrôle Sol",
-        description: "IHM pour les opérateurs de drones.",
-        maxTjm: 620,
-        requiredSkills: ["Java", "JavaFX", "Real-time"],
       },
     ],
   },

@@ -4,7 +4,7 @@ import { FreelanceRoute } from "./freelance.routes";
 
 const router = Router()
 
-router.use('/enterprise', EnterpriseRoute)
-router.use('/freelance', FreelanceRoute)
+router.use('/enterprises', EnterpriseRoute)
+router.use('/freelances', FreelanceRoute)
 
 export { router as v1Route }

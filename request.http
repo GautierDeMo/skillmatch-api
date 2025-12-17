@@ -1,0 +1,85 @@
+################################################################################
+# VARIABLES
+################################################################################
+
+@enterpriseId=1
+@freelanceId=1
+@projectId=1
+
+################################################################################
+# VARIABLES
+################################################################################
+
+################################################################################
+# GET ROUTES
+################################################################################
+
+### List all enterprises
+GET http://localhost:8001/v1/enterprises
+
+### Get an enterprise by id
+GET http://localhost:8001/v1/enterprises/{{enterpriseId}}
+
+### List all enterprise project
+GET http://localhost:8001/v1/enterprises/{{enterpriseId}}/projects
+
+### List all freelance(s) where skills match with a project
+GET http://localhost:8001/v1/enterprises/{{enterpriseId}}/project/{{projectId}}/matching-candidates
+
+### List all freelances
+GET http://localhost:8001/v1/freelances
+
+### Get a freelance by id
+GET http://localhost:8001/v1/freelances/{{freelanceId}}
+
+### List projects where the freelance can apply
+GET http://localhost:8001/v1/freelances/{{freelanceId}}/matching-projects
+
+################################################################################
+# GET ROUTES
+################################################################################
+
+# ------------------------------------------------------------------------------
+
+################################################################################
+# POST ROUTES
+################################################################################
+
+### Create an enterprise
+POST http://localhost:8001/v1/enterprises
+Content-Type: application/json
+
+{
+  "name": "AeroSpace",
+  "sector": "Aerospace"
+}
+
+### Create a project for an enterprise
+POST http://localhost:8001/v1/enterprises/{{enterpriseId}}/projects
+Content-Type: application/json
+
+{
+  "title": "Interface de Contrôle Sol",
+  "description": "IHM pour les opérateurs de drones.",
+  "maxTjm": 620,
+  "enterpriseId": "10",
+  "requiredSkills": ["Java", "JavaFX", "Real-time"]
+}
+
+### Create a freelance
+POST http://localhost:8001/v1/freelances
+Content-Type: application/json
+
+{
+  "name": "Jack Fullstack",
+  "email": "jack.stack@code.com",
+  "tjm": 620,
+  "skills": ["Angular", ".NET", "C#"]
+}
+
+### Apply to a project (with automatic matching for skills)
+POST http://localhost:8001/v1/freelances/{{freelanceId}}/apply/{{projectId}}
+
+################################################################################
+# POST ROUTES
+################################################################################
