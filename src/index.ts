@@ -1,6 +1,6 @@
 import express from "express";
 import { jsonApiResponseMiddleware } from "./middlewares/v1";
-import { v1Route } from "./routes/v1";
+import { v1Route } from "./routers/v1";
 
 const port = 8001
 const app = express()

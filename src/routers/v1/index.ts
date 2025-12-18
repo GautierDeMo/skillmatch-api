@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { EnterpriseRoute } from "./enterprise.routes";
-import { FreelanceRoute } from "./freelance.routes";
+import { EnterpriseRoute } from "./enterprise.router";
+import { FreelanceRoute } from "./freelance.router";
 
 const router = Router()
 

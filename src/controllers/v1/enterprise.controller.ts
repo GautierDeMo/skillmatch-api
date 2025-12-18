@@ -26,7 +26,7 @@ export const getEnterpriseById = async (
 ) : Promise<any> => {
   try {
     const { id } = req.params
-    if (id) {
+    if (id && !isNaN(+id)) {
       const enterprise = await prisma.enterprise.findUnique({
         /** '+' operator to cast string into a number because query params are
         always string */
@@ -37,6 +37,7 @@ export const getEnterpriseById = async (
       }
       return res.jsonSuccess(sanitizeEnterprise(enterprise), 200)
     }
+    return res.jsonError('Invalid or missing Enterprise ID', 400)
   } catch (error) {
     next(error)
   }
@@ -49,7 +50,7 @@ export const getEnterpriseProjects = async (
 ) : Promise<any> => {
   try {
     const { id } = req.params
-    if (id) {
+    if (id && !isNaN(+id)) {
       const projects = await prisma.project.findMany({
         where: {
           enterpriseId: +id
@@ -58,6 +59,7 @@ export const getEnterpriseProjects = async (
       if (!projects.length) return res.jsonError('No projects found', 404)
       return res.jsonSuccess(projects, 200)
     }
+    return res.jsonError('Invalid or missing Enterprise ID', 400)
   } catch (error) {
     next(error)
   }
@@ -137,12 +139,12 @@ export const getAllMatchingFreelances = async (
             }
           }
         })
-        return res.jsonSuccess(`Here are the matching freelances: ${matchingFreelances.map(freelance => freelance.name)}`)
+        return res.jsonSuccess(`Here are the matching freelances: ${matchingFreelances.map(freelance => freelance.name).join(', ')}`)
       }
+      return res.jsonError('Project not found', 404)
     }
+    return res.jsonError('Missing id or projectId parameters', 400)
   } catch (error) {
     next(error)
   }
 }
-
-// TODO: gérer les erreurs en cas de conditions if qui sont false

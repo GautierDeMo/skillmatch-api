@@ -26,7 +26,7 @@ export const getFreelanceById = async (
 ) : Promise<any> => {
   try {
     const { id } = req.params
-    if (id) {
+    if (id && !isNaN(+id)) {
       const freelance = await prisma.freelance.findUnique({
         /** '+' operator to cast string into a number because query params are
         always string */
@@ -37,6 +37,7 @@ export const getFreelanceById = async (
       }
       return res.jsonSuccess(sanitizeFreelance(freelance), 200)
     }
+    return res.jsonError('Invalid or missing Freelance ID', 400)
   } catch (error) {
     next(error)
   }
@@ -73,21 +74,25 @@ export const getProjectsWhereSkillsMatch = async (
   next: NextFunction
 ) : Promise<any> => {
   try {
-    if (req.params.id) {
+    const { id } = req.params
+    if (id && !isNaN(+id)) {
       const freelance = await prisma.freelance.findUnique({
-        where: { id: +req.params.id }
+        where: { id: +id }
       })
-      if (freelance?.skills) {
+
+      if (freelance && freelance.skills) {
         const matchingProjects = await prisma.project.findMany({
           where: {
             requiredSkills: {
-              hasSome: freelance?.skills
+              hasSome: freelance.skills
             }
           }
         })
-        return res.jsonSuccess(`Here are the matching projects: ${matchingProjects.map(project => project.title)}`, 200)
+        return res.jsonSuccess(`Here are the matching projects: ${matchingProjects.map(project => project.title).join(', ')}`, 200)
       }
+      return res.jsonError('Freelance not found or has no skills', 404)
     }
+    return res.jsonError('Invalid or missing Freelance ID', 400)
   } catch (error) {
     next(error)
   }
@@ -100,18 +105,17 @@ export const applyToAProject = async (
 ) : Promise<any> => {
   try {
     const { id, projectId } = req.params
-    if (id && projectId) {
-      const freelance = await prisma.freelance.findUnique({
-        where: { id: +id }
-      })
-      const project = await prisma.project.findUnique({
-        where: { id: +projectId }
-      })
-      if (project?.requiredSkills && freelance?.skills) {
-        console.log(project.requiredSkills, freelance.skills)
-        const matchingSkills = freelance.skills.filter(skill => project.requiredSkills.indexOf(skill) >= 0)
-        if (matchingSkills === freelance.skills) {
-          if (project.maxTjm >= freelance.tjm) {
+    if (id && projectId && !isNaN(+id) && !isNaN(+projectId)) {
+      const freelance = await prisma.freelance.findUnique({ where: { id: +id } })
+      const project = await prisma.project.findUnique({ where: { id: +projectId } })
+
+      if (project && freelance) {
+        const missingSkills = project.requiredSkills.filter(skill => !freelance.skills.includes(skill));
+
+        if (missingSkills.length === 0) {
+
+          if (freelance.tjm <= project.maxTjm) {
+
             if (!project.freelanceId) {
               await prisma.project.update({
                 where: { id: +projectId },
@@ -119,19 +123,20 @@ export const applyToAProject = async (
               })
               return res.jsonSuccess(`The project ${project.title} has now a freelance assigned: ${freelance.name}`, 200)
             }
-            return res.jsonError(`The project ${project?.title} already has an assigned freelance: ${freelance?.name}`, 400)
+            return res.jsonError(`The project ${project.title} is already assigned (FreelanceID: ${project.freelanceId})`, 400)
           }
           return res.jsonError(`Your tjm is above the project maxTjm: ${freelance.tjm} > ${project.maxTjm}`, 400)
         }
-        return res.jsonError("Your appliance has been recorded, you don't have all of the required skills", 400)
+        return res.jsonError(`Your appliance has been rejected, you miss the following skills: ${missingSkills.join(', ')}`, 400)
       }
+      return res.jsonError('Freelance or Project not found', 404)
     }
+    return res.jsonError('Missing or invalid id/projectId parameters', 400)
   } catch (error) {
     next(error)
   }
 }
 
-// TODO: gérer les erreurs en cas de conditions if qui sont false
 // TODO: gérer lorsque le tableau est pas dans le même sens, avec ça la casse
 
 // TODO: matching partiel avec score de compatibilité
